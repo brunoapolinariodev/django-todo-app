@@ -6,6 +6,8 @@
   <a href="?status=concluidas" class="btn btn-outline-secondary {% if status == 'concluidas' %}active{% endif %}">Concluídas</a>
 </div>
 
+<h2 class="mb-4">{{ titulo }}</h2>
+
 <a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}"
   >➕ Nova Tarefa</a
 >
