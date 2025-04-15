@@ -1,0 +1,21 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Minhas Tarefas{% endblock %}
+
+{% block content %}
+<h2>Minhas Tarefas</h2>
+<ul class="list-group">
+    {% for task in tasks %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ task.title }}
+        {% if task.completed %}
+            <span class="badge bg-success">Concluída</span>
+        {% else %}
+            <span class="badge bg-warning text-dark">Pendente</span>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li class="list-group-item">Nenhuma tarefa ainda.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
