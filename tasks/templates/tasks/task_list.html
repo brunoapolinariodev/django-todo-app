@@ -8,6 +8,14 @@
 
 <h2 class="mb-4">{{ titulo }}</h2>
 
+<div class="mb-3">
+  <strong>Ordenar por:</strong>
+  <a class="btn btn-sm btn-outline-secondary {% if ordenar == 'created_at' %}active{% endif %}" href="?ordenar=created_at">Data</a>
+  <a class="btn btn-sm btn-outline-secondary {% if ordenar == 'prioridade' %}active{% endif %}" href="?ordenar=prioridade">Prioridade</a>
+  <a class="btn btn-sm btn-outline-secondary {% if ordenar == 'nome' %}active{% endif %}" href="?ordenar=nome">Nome</a>
+</div>
+
+
 <a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}"
   >➕ Nova Tarefa</a
 >

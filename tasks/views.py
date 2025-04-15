@@ -8,6 +8,7 @@ from django.http import JsonResponse
 @login_required
 def task_list(request):
     status = request.GET.get('status', 'todas')
+    ordenar = request.GET.get('ordenar', 'created_at')
 
     if status == 'pendentes':
         tasks = Task.objects.filter(user=request.user, completed=False)
@@ -19,9 +20,18 @@ def task_list(request):
         tasks = Task.objects.filter(user=request.user)
         titulo = "Minhas Tarefas"
 
+    if ordenar == 'nome':
+        tasks = tasks.order_by('title')
+    elif ordenar == 'prioridade':
+        prioridade_ordem = {'alta': 0, 'media': 1, 'baixa': 2}
+        tasks = sorted(tasks, key=lambda x: prioridade_ordem[x.prioridade])
+    else:
+        tasks = tasks.order_by('-created_at')
+
     return render(request, 'tasks/task_list.html', {
         'tasks': tasks,
         'status': status,
+        'ordenar': ordenar,
         'titulo': titulo
     })
 
