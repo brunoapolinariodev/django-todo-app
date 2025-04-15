@@ -7,8 +7,19 @@ from django.http import JsonResponse
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.filter(user=request.user, completed=False)
-    return render(request, 'tasks/task_list.html', {'tasks': tasks})
+    status = request.GET.get('status', 'pendentes')  # pega o filtro da URL, se não tiver usa "pendentes"
+
+    if status == 'concluidas':
+        tasks = Task.objects.filter(user=request.user, completed=True)
+    elif status == 'todas':
+        tasks = Task.objects.filter(user=request.user)
+    else:  # padrão = pendentes
+        tasks = Task.objects.filter(user=request.user, completed=False)
+
+    return render(request, 'tasks/task_list.html', {
+        'tasks': tasks,
+        'status': status  # envia o filtro atual para o template
+    })
 
 @login_required
 def add_task(request):
