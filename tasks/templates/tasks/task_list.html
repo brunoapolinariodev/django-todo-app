@@ -1,13 +1,16 @@
-{% extends 'tasks/base.html' %} {% block content %}
+{% extends 'tasks/base.html' %}
+{% block content %}
 <h2 class="mb-4">Minhas tarefas:</h2>
+
+<!-- Filtro de Status -->
 <div class="mb-3">
   <a href="?status=todas" class="btn btn-outline-secondary {% if status == 'todas' %}active{% endif %}">Todas</a>
   <a href="?status=pendentes" class="btn btn-outline-secondary {% if status == 'pendentes' %}active{% endif %}">Pendentes</a>
   <a href="?status=concluidas" class="btn btn-outline-secondary {% if status == 'concluidas' %}active{% endif %}">Concluídas</a>
 </div>
 
+<!-- Ordenação -->
 <h2 class="mb-4">{{ titulo }}</h2>
-
 <div class="mb-3">
   <strong>Ordenar por:</strong>
   <a class="btn btn-sm btn-outline-secondary {% if ordenar == 'created_at' %}active{% endif %}" href="?ordenar=created_at">Data</a>
@@ -15,46 +18,52 @@
   <a class="btn btn-sm btn-outline-secondary {% if ordenar == 'nome' %}active{% endif %}" href="?ordenar=nome">Nome</a>
 </div>
 
+<!-- Botão para adicionar nova tarefa -->
+<a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}">
+  ➕ Nova Tarefa
+</a>
 
-<a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}"
-  >➕ Nova Tarefa</a
->
-
+<!-- Lista de tarefas -->
 <ul class="list-group" id="task-list">
   {% for task in tasks %}
-  <li
-    class="list-group-item d-flex justify-content-between align-items-start {% if task.completed %}text-decoration-line-through{% endif %}"
-  >
+  <li class="list-group-item d-flex justify-content-between align-items-start {% if task.completed %}text-decoration-line-through{% endif %}">
     <div class="form-check me-3">
-      <input
-        type="checkbox"
-        data-id="{{ task.id }}"
-        class="form-check-input toggle-complete"
-        {%
-        if
-        task.completed
-        %}checked{%
-        endif
-        %}
-      />
+      <input type="checkbox" data-id="{{ task.id }}" class="form-check-input toggle-complete" {% if task.completed %}checked{% endif %}/>
     </div>
     <div class="flex-grow-1">
-      <div class="fw-bold">{{ task.title }}</div>
-      <small class="text-muted">{{ task.description }}</small>
+      <!-- Título da tarefa, que abre o modal de descrição -->
+      <span class="fw-bold text-primary" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+        {{ task.title }}
+      </span>
+      <small class="text-muted">{{ task.description|truncatewords:5 }}</small> <!-- Mostra uma descrição curta -->
     </div>
     <div class="ms-3 d-flex align-items-center">
-      <a
-        class="btn btn-sm btn-outline-primary me-2"
-        href="{% url 'tasks:edit_task' task.id %}"
-        >✏️ Editar</a
-      >
-      <a
-        class="btn btn-sm btn-outline-danger"
-        href="{% url 'tasks:delete_task' task.id %}"
-        >🗑️ Excluir</a
-      >
+      <a class="btn btn-sm btn-outline-primary me-2" href="{% url 'tasks:edit_task' task.id %}">✏️ Editar</a>
+      <a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:delete_task' task.id %}">🗑️ Excluir</a>
     </div>
   </li>
+
+  <!-- Modal para exibir descrição detalhada da tarefa -->
+  <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel{{ task.id }}">{{ task.title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Descrição:</strong> {{ task.description|default:"(sem descrição)" }}</p>
+          <p><strong>Prioridade:</strong> {{ task.get_prioridade_display }}</p>
+          <p><strong>Status:</strong> {% if task.completed %} ✅ Concluída {% else %} ⏳ Pendente {% endif %}</p>
+          <p><strong>Data de criação:</strong> {{ task.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {% empty %}
   <li class="list-group-item text-muted text-center">
     Nenhuma tarefa encontrada.
@@ -63,6 +72,7 @@
 </ul>
 
 <script>
+  // Script para marcar tarefas como concluídas com um clique
   document.querySelectorAll(".toggle-complete").forEach((checkbox) => {
     checkbox.addEventListener("change", function () {
       const taskId = this.getAttribute("data-id");
@@ -77,13 +87,11 @@
         .then((data) => {
           if (data.success) {
             const listItem = this.closest("li");
-            listItem.classList.toggle(
-              "text-decoration-line-through",
-              data.completed
-            );
+            listItem.classList.toggle("text-decoration-line-through", data.completed);
           }
         });
     });
   });
 </script>
 {% endblock %}
+
