@@ -3,7 +3,35 @@
   <h2>{% if form.instance.pk %}Editar Tarefa{% else %}Nova Tarefa{% endif %}</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    <!-- Título -->
+    <div class="mb-3">
+      <label for="title" class="form-label">Título</label>
+      <input type="text" class="form-control" id="title" name="title" value="{{ form.title.value }}" required>
+    </div>
+
+    <!-- Descrição -->
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea class="form-control" id="description" name="description" required>{{ form.description.value }}</textarea>
+    </div>
+
+    <!-- Data Limite -->
+    <div class="mb-3">
+      <label for="due_date" class="form-label">Data Limite</label>
+      <input type="datetime-local" class="form-control" id="due_date" name="due_date" value="{{ form.due_date.value|date:"Y-m-d\TH:i" }}">
+    </div>
+
+    <!-- Prioridade -->
+    <div class="mb-3">
+      <label for="priority" class="form-label">Prioridade</label>
+      <select class="form-select" id="priority" name="priority">
+        <option value="baixa" {% if form.priority.value == 'baixa' %}selected{% endif %}>Baixa</option>
+        <option value="media" {% if form.priority.value == 'media' %}selected{% endif %}>Média</option>
+        <option value="alta" {% if form.priority.value == 'alta' %}selected{% endif %}>Alta</option>
+      </select>
+    </div>
+
     <button class="btn btn-primary" type="submit">Salvar</button>
   </form>
 {% endblock %}

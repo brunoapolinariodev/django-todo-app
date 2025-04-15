@@ -36,6 +36,18 @@
         {{ task.title }}
       </span>
       <small class="text-muted">{{ task.description|truncatewords:5 }}</small> <!-- Mostra uma descrição curta -->
+      <p><strong>Prioridade:</strong> 
+        {% if task.priority == 'alta' %}
+          <span class="badge bg-danger ms-2">Alta</span>
+        {% elif task.priority == 'media' %}
+          <span class="badge bg-warning ms-2">Média</span>
+        {% else %}
+          <span class="badge bg-success ms-2">Baixa</span>
+        {% endif %}
+      </p>
+      {% if task.due_date %}
+        <p><strong>Data Limite:</strong> {{ task.due_date|date:"d/m/Y H:i" }}</p>
+      {% endif %}
     </div>
     <div class="ms-3 d-flex align-items-center">
       <a class="btn btn-sm btn-outline-primary me-2" href="{% url 'tasks:edit_task' task.id %}">✏️ Editar</a>
@@ -55,6 +67,7 @@
           <p><strong>Descrição:</strong> {{ task.description|default:"(sem descrição)" }}</p>
           <p><strong>Prioridade:</strong> {{ task.get_prioridade_display }}</p>
           <p><strong>Status:</strong> {% if task.completed %} ✅ Concluída {% else %} ⏳ Pendente {% endif %}</p>
+          <p><strong>Data Limite:</strong> {% if task.due_date %} {{ task.due_date|date:"d/m/Y H:i" }} {% else %} (não definida) {% endif %}</p>
           <p><strong>Data de criação:</strong> {{ task.created_at|date:"d/m/Y H:i" }}</p>
         </div>
         <div class="modal-footer">
@@ -94,4 +107,3 @@
   });
 </script>
 {% endblock %}
-
