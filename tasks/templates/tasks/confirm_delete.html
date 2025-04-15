@@ -1,0 +1,9 @@
+{% extends 'tasks/base.html' %}
+{% block content %}
+  <h2>Confirma a exclusão da tarefa "{{ task.title }}"?</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Sim, excluir</button>
+    <a class="btn btn-secondary" href="{% url 'tasks:task_list' %}">Cancelar</a>
+  </form>
+{% endblock %}

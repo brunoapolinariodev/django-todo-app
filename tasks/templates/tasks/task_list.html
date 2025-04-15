@@ -1,21 +1,74 @@
-{% extends 'tasks/base.html' %}
+{% extends 'tasks/base.html' %} {% block content %}
+<h2 class="mb-4">Minhas tarefas:</h2>
 
-{% block title %}Minhas Tarefas{% endblock %}
+<a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}"
+  >➕ Nova Tarefa</a
+>
 
-{% block content %}
-<h2>Minhas Tarefas</h2>
-<ul class="list-group">
-    {% for task in tasks %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ task.title }}
-        {% if task.completed %}
-            <span class="badge bg-success">Concluída</span>
-        {% else %}
-            <span class="badge bg-warning text-dark">Pendente</span>
-        {% endif %}
-    </li>
-    {% empty %}
-    <li class="list-group-item">Nenhuma tarefa ainda.</li>
-    {% endfor %}
+<ul class="list-group" id="task-list">
+  {% for task in tasks %}
+  <li
+    class="list-group-item d-flex justify-content-between align-items-start {% if task.completed %}text-decoration-line-through{% endif %}"
+  >
+    <div class="form-check me-3">
+      <input
+        type="checkbox"
+        data-id="{{ task.id }}"
+        class="form-check-input toggle-complete"
+        {%
+        if
+        task.completed
+        %}checked{%
+        endif
+        %}
+      />
+    </div>
+    <div class="flex-grow-1">
+      <div class="fw-bold">{{ task.title }}</div>
+      <small class="text-muted">{{ task.description }}</small>
+    </div>
+    <div class="ms-3 d-flex align-items-center">
+      <a
+        class="btn btn-sm btn-outline-primary me-2"
+        href="{% url 'tasks:edit_task' task.id %}"
+        >✏️ Editar</a
+      >
+      <a
+        class="btn btn-sm btn-outline-danger"
+        href="{% url 'tasks:delete_task' task.id %}"
+        >🗑️ Excluir</a
+      >
+    </div>
+  </li>
+  {% empty %}
+  <li class="list-group-item text-muted text-center">
+    Nenhuma tarefa encontrada.
+  </li>
+  {% endfor %}
 </ul>
+
+<script>
+  document.querySelectorAll(".toggle-complete").forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      const taskId = this.getAttribute("data-id");
+      fetch(`/toggle/${taskId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const listItem = this.closest("li");
+            listItem.classList.toggle(
+              "text-decoration-line-through",
+              data.completed
+            );
+          }
+        });
+    });
+  });
+</script>
 {% endblock %}
