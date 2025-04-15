@@ -1,5 +1,10 @@
 {% extends 'tasks/base.html' %} {% block content %}
 <h2 class="mb-4">Minhas tarefas:</h2>
+<div class="mb-3">
+  <a href="?status=todas" class="btn btn-outline-secondary {% if status == 'todas' %}active{% endif %}">Todas</a>
+  <a href="?status=pendentes" class="btn btn-outline-secondary {% if status == 'pendentes' %}active{% endif %}">Pendentes</a>
+  <a href="?status=concluidas" class="btn btn-outline-secondary {% if status == 'concluidas' %}active{% endif %}">Concluídas</a>
+</div>
 
 <a class="btn btn-success mb-3" href="{% url 'tasks:add_task' %}"
   >➕ Nova Tarefa</a
