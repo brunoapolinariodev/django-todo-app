@@ -1,0 +1,14 @@
+# .github/workflows/cd.yml
+name: Simulated CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Simulate deployment
+        run: echo "Deploying app..."
