@@ -31,10 +31,12 @@ jobs:
     - name: Apply database migrations
       run: |
         python manage.py makemigrations
-        python manage.py migrate
-
-    - name: Flush database
-      run: python manage.py flush --no-input
+        python manage.py migrate --noinput  # Certifique-se de aplicar as migrações
+    
+    - name: Check migrations
+      run: |
+        python manage.py migrate --noinput
+        python manage.py showmigrations
 
     - name: Run tests
       run: python manage.py test
