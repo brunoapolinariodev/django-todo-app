@@ -28,5 +28,11 @@ jobs:
     - name: Check formatting with black
       run: black --check .
 
+    - name: Apply database migrations
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
+
     - name: Run tests
       run: python manage.py test
+
