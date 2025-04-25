@@ -33,6 +33,8 @@ jobs:
         python manage.py makemigrations
         python manage.py migrate
 
+    - name: Flush database
+      run: python manage.py flush --no-input
+
     - name: Run tests
       run: python manage.py test
-
