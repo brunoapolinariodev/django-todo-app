@@ -1,0 +1,25 @@
+name: Alerta para Discord
+
+on:
+  push:         # A cada commit
+  pull_request: # A cada PR aberta ou atualizada
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar alerta para Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.sha }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"🚀 Evento: *$EVENT_NAME* no repositório *$REPO*\nAutor: *$ACTOR*\nMensagem: *${MESSAGE:-$PR_TITLE}*\nLink: https://github.com/$REPO/commit/$SHA\"}" \
+               $DISCORD_WEBHOOK
